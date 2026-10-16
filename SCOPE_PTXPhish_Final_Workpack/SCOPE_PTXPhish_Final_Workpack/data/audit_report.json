@@ -1,0 +1,34 @@
+{
+  "input_file": "PTXPHISH.xlsx",
+  "raw_rows_including_headers": 9577,
+  "raw_columns": 28,
+  "extracted_valid_transaction_hash_rows": 18555,
+  "unique_transaction_hashes": 18555,
+  "phishing_hashes": 4998,
+  "benign_hashes": 13557,
+  "duplicate_hash_rows_after_normalization": 0,
+  "hashes_with_conflicting_labels": 0,
+  "category_counts": {
+    "airdrop_function": 788,
+    "approve": 1247,
+    "benign_developer": 3985,
+    "benign_kol": 9572,
+    "bulk_transfer": 37,
+    "dust_value_transfer": 22,
+    "fake_token_transfer": 100,
+    "free_buy_order": 464,
+    "permit": 814,
+    "proxy_upgrade": 108,
+    "set_approve_for_all": 508,
+    "wallet_function": 806,
+    "zero_value_transfer": 104
+  },
+  "initial_address_workbook_shape": [
+    57,
+    43
+  ],
+  "compatibility_verdict": "CONDITIONAL GO for transaction-payload phishing detection; NO-GO for direct training on current SCOPE ProposedAction fields alone.",
+  "reason": "PTXPhish provides labelled transaction hashes and categories, not a ready numerical feature matrix. SCOPE ProposedAction fields (action_kind, target_address, amount, unlimited_approval, known_contract, requires_user_consent) do not contain enough payload detail to reliably reconstruct PTXPhish features. A reproducible transaction/calldata decoder and feature extractor is needed both at training and inference.",
+  "safety": "ML is advisory only. Existing deterministic deny rules remain authoritative.",
+  "accuracy_note": "No model was trained in this audit. Accuracy cannot be estimated from hashes/categories alone, and 98-99% is not guaranteed."
+}
