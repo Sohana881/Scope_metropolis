@@ -1,0 +1,86 @@
+{
+  "model_version": "scope-address-risk-v1",
+  "dataset": "BLTE multiclass Ethereum address-risk benchmark",
+  "rows_used": 73033,
+  "feature_count": 23,
+  "class_counts": {
+    "0": 72865,
+    "1": 69,
+    "2": 99
+  },
+  "split_sizes": {
+    "train": 43819,
+    "validation": 14607,
+    "test": 14607
+  },
+  "metrics": {
+    "selected_model": "ExtraTrees-balanced",
+    "accuracy": 0.9952762374204148,
+    "balanced_accuracy": 0.6270386673844887,
+    "macro_precision": 0.4698915914585673,
+    "macro_recall": 0.6270386673844887,
+    "macro_f1": 0.5194094782656868,
+    "weighted_f1": 0.9962031122253984,
+    "classification_report": {
+      "NORMAL": {
+        "precision": 0.999105668684645,
+        "recall": 0.9965006175380815,
+        "f1-score": 0.9978014428031604,
+        "support": 14574.0
+      },
+      "PHISHING": {
+        "precision": 0.16666666666666666,
+        "recall": 0.38461538461538464,
+        "f1-score": 0.23255813953488372,
+        "support": 13.0
+      },
+      "SCAMMING": {
+        "precision": 0.24390243902439024,
+        "recall": 0.5,
+        "f1-score": 0.32786885245901637,
+        "support": 20.0
+      },
+      "accuracy": 0.9952762374204148,
+      "macro avg": {
+        "precision": 0.4698915914585673,
+        "recall": 0.6270386673844887,
+        "f1-score": 0.5194094782656868,
+        "support": 14607.0
+      },
+      "weighted avg": {
+        "precision": 0.9973307818756192,
+        "recall": 0.9952762374204148,
+        "f1-score": 0.9962031122253984,
+        "support": 14607.0
+      }
+    }
+  },
+  "confusion_matrix_labels": [
+    0,
+    1,
+    2
+  ],
+  "confusion_matrix": [
+    [
+      14523,
+      22,
+      29
+    ],
+    [
+      6,
+      5,
+      2
+    ],
+    [
+      7,
+      3,
+      10
+    ]
+  ],
+  "limitations": [
+    "Dataset labels Ethereum addresses, not individual transaction actions.",
+    "Random stratified split is not temporal or external validation.",
+    "Severe class imbalance makes accuracy alone misleading.",
+    "ML is advisory; deterministic hard-deny policy remains authoritative."
+  ]
+}
