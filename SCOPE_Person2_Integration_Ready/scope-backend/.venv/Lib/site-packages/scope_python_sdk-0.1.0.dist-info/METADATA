@@ -1,0 +1,106 @@
+Metadata-Version: 2.4
+Name: scope-python-sdk
+Version: 0.1.0
+Summary: Typed Python client for the SCOPE action security API
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0,>=0.110
+Requires-Dist: uvicorn[standard]<1.0,>=0.27
+Requires-Dist: httpx<1.0,>=0.27
+Requires-Dist: pydantic<3.0,>=2.0
+Provides-Extra: dev
+Requires-Dist: pytest<10.0,>=8.0; extra == "dev"
+
+# SCOPE Backend — Person 2
+
+FastAPI backend, deterministic risk/policy engine, simulated execution gate, SQLite receipts, HMAC receipt verification, and typed Python SDK.
+
+> **MVP limitations:** execution is simulated; consent is a demo boolean confirmation, not WebAuthn/passkey verification; the decoder supports only ERC-20 `transfer`, `approve`, and `transferFrom` selectors. Unsupported calldata is explicitly marked unsupported. Do not present this as production-audited security.
+
+## Requirements
+- Python 3.11+
+- Dependencies in `pyproject.toml`
+
+## Windows quick start (CMD)
+
+```bat
+cd scope-backend
+py -3.11 -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install --upgrade pip
+python -m pip install -e .
+python -m pip install pytest
+python -m pytest -q
+python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+If `.venv` already exists, activate it instead of recreating it. Open:
+- Swagger UI: http://127.0.0.1:8000/docs
+- OpenAPI JSON: http://127.0.0.1:8000/openapi.json
+- Health: http://127.0.0.1:8000/health
+
+The SQLite database `scope.db` is created beside `main.py` on first run. Do not delete it while the server is running.
+
+## Environment variables
+Copy `.env.example` values into your terminal environment or deployment configuration. The app reads environment variables directly; it does not automatically load a `.env` file.
+
+```bat
+set SCOPE_ENV=development
+set SCOPE_RECEIPT_SECRET=LOCAL-DEVELOPMENT-ONLY-CHANGE-ME
+set SCOPE_CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+```
+
+For production, set `SCOPE_ENV=production` and provide a strong, private `SCOPE_RECEIPT_SECRET`. Never commit the real secret. The development fallback intentionally raises an error in production.
+
+## Endpoints
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/health` | Health check |
+| POST | `/v1/actions/decode` | Decode supported ERC-20 calldata; unsupported calls stay explicit |
+| POST | `/v1/actions/evaluate` | Compute action hash, risk signals and policy decision |
+| POST | `/v1/consent/challenge` | Create a challenge for an evaluated `REQUIRE_CONSENT` action |
+| POST | `/v1/consent/verify` | Demo consent confirmation; single-use challenge |
+| POST | `/v1/actions/execute` | Policy/consent-gated simulated execution |
+| GET | `/v1/receipts/{receipt_id}` | Retrieve receipt and HMAC signature |
+| POST | `/v1/actions/verify` | Verify receipt against stored fields and HMAC |
+
+Grant creation/revocation, real WebAuthn verification, real chain execution, transaction outcome verification, and on-chain receipt commitment are **not implemented in this backend**. The guide expects grant revocation; coordinate the grant API shape with Person 1 before claiming that endpoint exists.
+
+## SDK demo
+Terminal 1: start the API as above.
+Terminal 2:
+```bat
+.venv\Scripts\activate.bat
+python sdk_demo.py
+```
+For environment-based configuration:
+```bat
+set SCOPE_BASE_URL=http://127.0.0.1:8000
+set SCOPE_TIMEOUT=10
+python sdk_config_demo.py
+```
+Use a fresh `request_id` each run. An identical already-executed action is rejected.
+
+## Python SDK quick use
+```python
+from scope_sdk import ScopeClient
+
+with ScopeClient("http://127.0.0.1:8000") as client:
+    print(client.health())
+    decoded = client.decode_action(
+        chain_id=10143,
+        target_address="0x1234567890123456789012345678901234567890",
+        calldata="0x",
+    )
+    print(decoded.model_dump())
+```
+
+## Test suite
+```bat
+python -m pytest -q
+```
+
+The SDK tests use mocked HTTP responses. Backend tests use FastAPI's test client and SQLite. A Starlette/httpx deprecation warning may appear depending on installed versions; it is not a failing test.
+
+## Integration handoff
+Read `INTEGRATION_CONTRACT.md` before wiring Person 1 or Person 3. Current request/response JSON uses `snake_case`; do not silently switch to the guide's illustrative camelCase fields without agreeing on a shared schema and hash fixture.
