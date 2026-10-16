@@ -1,0 +1,915 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SCOPE Backend",
+    "description": "AI agent action security and policy API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/actions/decode": {
+      "post": {
+        "summary": "Decode Action",
+        "description": "Decode common ERC-20 selectors; unsupported calls are never labelled safe.",
+        "operationId": "decode_action_v1_actions_decode_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecodeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/actions/evaluate": {
+      "post": {
+        "summary": "Evaluate Action",
+        "operationId": "evaluate_action_v1_actions_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposedAction"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/consent/challenge": {
+      "post": {
+        "summary": "Consent Challenge",
+        "operationId": "consent_challenge_v1_consent_challenge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposedAction"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentChallengeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/consent/verify": {
+      "post": {
+        "summary": "Consent Verify",
+        "operationId": "consent_verify_v1_consent_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentVerificationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/actions/execute": {
+      "post": {
+        "summary": "Execute Action",
+        "operationId": "execute_action_v1_actions_execute_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/receipts/{receipt_id}": {
+      "get": {
+        "summary": "Read Receipt",
+        "operationId": "read_receipt_v1_receipts__receipt_id__get",
+        "parameters": [
+          {
+            "name": "receipt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Receipt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/actions/verify": {
+      "post": {
+        "summary": "Verify Action Receipt",
+        "operationId": "verify_action_receipt_v1_actions_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReceiptVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptVerificationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConsentChallengeResponse": {
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "title": "Challenge Id"
+          },
+          "action_hash": {
+            "type": "string",
+            "title": "Action Hash"
+          },
+          "status": {
+            "type": "string",
+            "const": "PENDING",
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "challenge_id",
+          "action_hash",
+          "status",
+          "message"
+        ],
+        "title": "ConsentChallengeResponse"
+      },
+      "ConsentVerificationRequest": {
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "title": "Challenge Id"
+          },
+          "action_hash": {
+            "type": "string",
+            "title": "Action Hash"
+          },
+          "consent_granted": {
+            "type": "boolean",
+            "title": "Consent Granted"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "challenge_id",
+          "action_hash",
+          "consent_granted"
+        ],
+        "title": "ConsentVerificationRequest"
+      },
+      "ConsentVerificationResponse": {
+        "properties": {
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "challenge_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Challenge Id"
+          },
+          "action_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Hash"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "verified"
+        ],
+        "title": "ConsentVerificationResponse"
+      },
+      "DecodeRequest": {
+        "properties": {
+          "chain_id": {
+            "type": "integer",
+            "title": "Chain Id"
+          },
+          "target_address": {
+            "type": "string",
+            "title": "Target Address"
+          },
+          "calldata": {
+            "type": "string",
+            "title": "Calldata",
+            "default": "0x"
+          },
+          "value_wei": {
+            "type": "string",
+            "title": "Value Wei",
+            "default": "0"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "chain_id",
+          "target_address"
+        ],
+        "title": "DecodeRequest"
+      },
+      "DecodeResponse": {
+        "properties": {
+          "supported": {
+            "type": "boolean",
+            "title": "Supported"
+          },
+          "chain_id": {
+            "type": "integer",
+            "title": "Chain Id"
+          },
+          "target_address": {
+            "type": "string",
+            "title": "Target Address"
+          },
+          "selector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selector"
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Method"
+          },
+          "decoded": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Decoded",
+            "default": {}
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "supported",
+          "chain_id",
+          "target_address",
+          "reason"
+        ],
+        "title": "DecodeResponse"
+      },
+      "EvaluationResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "action_hash": {
+            "type": "string",
+            "title": "Action Hash"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "DENY",
+              "REQUIRE_CONSENT"
+            ],
+            "title": "Decision"
+          },
+          "risk_score": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Risk Score"
+          },
+          "risk_band": {
+            "type": "string",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ],
+            "title": "Risk Band"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "action_hash",
+          "decision",
+          "risk_score",
+          "risk_band",
+          "reasons"
+        ],
+        "title": "EvaluationResponse"
+      },
+      "ExecuteActionRequest": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id"
+          },
+          "chain_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Chain Id"
+          },
+          "action_kind": {
+            "type": "string",
+            "enum": [
+              "transfer",
+              "token_approval",
+              "contract_call"
+            ],
+            "title": "Action Kind"
+          },
+          "target_address": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Target Address"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Amount"
+          },
+          "unlimited_approval": {
+            "type": "boolean",
+            "title": "Unlimited Approval",
+            "default": false
+          },
+          "known_contract": {
+            "type": "boolean",
+            "title": "Known Contract",
+            "default": true
+          },
+          "requires_user_consent": {
+            "type": "boolean",
+            "title": "Requires User Consent",
+            "default": false
+          },
+          "consent_challenge_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Challenge Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "chain_id",
+          "action_kind",
+          "target_address",
+          "amount"
+        ],
+        "title": "ExecuteActionRequest"
+      },
+      "ExecutionResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "action_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Hash"
+          },
+          "receipt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReceiptResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "ExecutionResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "service"
+        ],
+        "title": "HealthResponse"
+      },
+      "ProposedAction": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id"
+          },
+          "chain_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Chain Id"
+          },
+          "action_kind": {
+            "type": "string",
+            "enum": [
+              "transfer",
+              "token_approval",
+              "contract_call"
+            ],
+            "title": "Action Kind"
+          },
+          "target_address": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Target Address"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Amount"
+          },
+          "unlimited_approval": {
+            "type": "boolean",
+            "title": "Unlimited Approval",
+            "default": false
+          },
+          "known_contract": {
+            "type": "boolean",
+            "title": "Known Contract",
+            "default": true
+          },
+          "requires_user_consent": {
+            "type": "boolean",
+            "title": "Requires User Consent",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "chain_id",
+          "action_kind",
+          "target_address",
+          "amount"
+        ],
+        "title": "ProposedAction"
+      },
+      "ReceiptResponse": {
+        "properties": {
+          "receipt_id": {
+            "type": "string",
+            "title": "Receipt Id"
+          },
+          "action_hash": {
+            "type": "string",
+            "title": "Action Hash"
+          },
+          "decision": {
+            "type": "string",
+            "title": "Decision"
+          },
+          "execution_status": {
+            "type": "string",
+            "title": "Execution Status"
+          },
+          "issued_at": {
+            "type": "string",
+            "title": "Issued At"
+          },
+          "signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "receipt_id",
+          "action_hash",
+          "decision",
+          "execution_status",
+          "issued_at"
+        ],
+        "title": "ReceiptResponse"
+      },
+      "ReceiptVerificationRequest": {
+        "properties": {
+          "receipt_id": {
+            "type": "string",
+            "title": "Receipt Id"
+          },
+          "action_hash": {
+            "type": "string",
+            "title": "Action Hash"
+          },
+          "decision": {
+            "type": "string",
+            "title": "Decision"
+          },
+          "execution_status": {
+            "type": "string",
+            "title": "Execution Status"
+          },
+          "issued_at": {
+            "type": "string",
+            "title": "Issued At"
+          },
+          "signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "receipt_id",
+          "action_hash",
+          "decision",
+          "execution_status",
+          "issued_at"
+        ],
+        "title": "ReceiptVerificationRequest"
+      },
+      "ReceiptVerificationResponse": {
+        "properties": {
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "receipt_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt Id"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "type": "object",
+        "required": [
+          "verified",
+          "reason"
+        ],
+        "title": "ReceiptVerificationResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
